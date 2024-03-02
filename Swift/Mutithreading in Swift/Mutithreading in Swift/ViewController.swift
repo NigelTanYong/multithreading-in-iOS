@@ -16,10 +16,18 @@ class ViewController: UIViewController {
     }
 
     @IBAction func randomImage(_ sender: Any) {
-        let url = URL(string: "https://loremflickr.com/2000/2000")
-        let data = try! Data(contentsOf: url!)
-        let image = UIImage(data: data)
-        imageView.image=image
+        let url = URL(string: "https://loremflickr.com/2000/2000")!
+        let task = URLSession.shared.downloadTask(with:url){(localUrl, response, error) in
+            
+            let data = try! Data(contentsOf: localUrl!)
+            let image = UIImage(data: data)
+            
+            DispatchQueue.main.async {
+                self.imageView.image=image
+            }
+        }
+        task.resume()
+       
     }
     
 }
