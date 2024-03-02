@@ -9,9 +9,7 @@
 
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
-
 @end
-
 @implementation ViewController
 
 - (void)viewDidLoad {
@@ -20,12 +18,18 @@
 }
 - (IBAction)randomImage:(id)sender {
     NSURL *url = [NSURL URLWithString:@"https://loremflickr.com/2000/2000"];
+    	
+    dispatch_queue_t backgroundQueue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0);
     
-    NSData *data = [NSData dataWithContentsOfURL:url];
-    
-    UIImage *image = [UIImage imageWithData: data];
-    
-    self.imageView.image = image;
+    dispatch_async(backgroundQueue, ^{
+        NSData *data = [NSData dataWithContentsOfURL:url];
+        
+        UIImage *image = [UIImage imageWithData: data];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.imageView.image = image;
+        });
+    });
 }
 
 
